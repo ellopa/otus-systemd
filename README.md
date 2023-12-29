@@ -2,12 +2,11 @@
 
 ### 1.Написать сервис.
 
-	Условия:
-	- Раз в 30 секунд мониторить лог на предмет наличия ключевого слова.
-	- Файл и слово должны задаваться в /etc/sysconfig.
+>-```Условия:```
+>-```- Раз в 30 секунд мониторить лог на предмет наличия ключевого слова.```
+>-```- Файл и слово должны задаваться в /etc/sysconfig.```
 
 - Создать файл с конфигурацией для сервиса в директории /etc/sysconfig - из неё сервис будет брать необходимые переменные /etc/sysconfig/watchlog
-
 ```bash
 [root@dz8 ~]# cat /etc/sysconfig/watchlog
 # Configuration file for my watchlog service
@@ -32,7 +31,6 @@ ALERT
 ```
 
 - Создать скрипт /opt/watchlog.sh, получилось 
-
 ```bash
 [root@dz8 /]# cat /opt/watchlog.sh
 #!/bin/bash
@@ -69,7 +67,6 @@ ExecStart=/opt/watchlog.sh $WORD $LOG
 ```
 
 - Создать юнит для таймера - /etc/systemd/system/watchlog.timer
-
 ```
 [root@dz8 /]# touch /etc/systemd/system/watchlog.timer
 [root@dz8 /]# nano /etc/systemd/system/watchlog.timer
@@ -87,7 +84,6 @@ WantedBy=multi-user.target
 ```
 
 - Стартануть и проверить
-
 ```
 [root@dz8 /]# systemctl start watchlog.service
 ```
@@ -173,7 +169,8 @@ KillMode=process
 [Install]
 WantedBy=multi-user.target
 ```
->- Запустить сервис spawn-fcgi.service
+>- ```Запустить сервис spawn-fcgi.service```
+
 ```
 [root@dz8 ~]# systemctl daemon-reload
 [root@dz8 ~]# systemctl enable --now spawn-fcgi.service
@@ -228,24 +225,24 @@ Dec 29 08:40:57 dz8 systemd[1]: Started Spawn-fcgi startup service by Otus.
 ### 3. Дополнить юнит-файл apache httpd возможностью запустить несколько инстансов сервера с разными конфигами
 
 - Установить софт (опционально) и настроить selinux
->- yum install nano -y
->- yum install -y policycoreutils-python
->- semanage port -m -t http_port_t -p tcp 8081
->- emanage port -m -t http_port_t -p tcp 8082
+>- ```yum install nano -y```
+>- ```yum install -y policycoreutils-python```
+>- ```semanage port -m -t http_port_t -p tcp 8081```
+>- ```emanage port -m -t http_port_t -p tcp 8082```
     
 - Скопировать и изменить файл сервиса httpd.service в шаблон
->- cp /usr/lib/systemd/system/httpd.service /etc/systemd/system/httpd@.service
->- sed -i 's*EnvironmentFile=/etc/sysconfig/httpd*EnvironmentFile=/etc/sysconfig/%i*' /etc/systemd/system/httpd@.service
+>- ```cp /usr/lib/systemd/system/httpd.service /etc/systemd/system/httpd@.service```
+>- ```sed -i 's*EnvironmentFile=/etc/sysconfig/httpd*EnvironmentFile=/etc/sysconfig/%i*' /etc/systemd/system/httpd@.service```
 ```
 [root@dz8 ~]# cp /usr/lib/systemd/system/httpd.service /etc/systemd/system/httpd@.service
 [root@dz8 ~]# sed -i 's*EnvironmentFile=/etc/sysconfig/httpd*EnvironmentFile=/etc/sysconfig/%i*' /etc/systemd/system/httpd@.service
 ```
 
 - Скопируем и изменим файлы настройки сервиса httpd.service
->- cp /etc/sysconfig/httpd /etc/sysconfig/conf1
->- cp /etc/sysconfig/httpd /etc/sysconfig/conf2
->- sed -i 's*#OPTIONS=*OPTIONS=-f /etc/httpd/conf/httpd1.conf*' /etc/sysconfig/conf1
->- sed -i 's*#OPTIONS=*OPTIONS=-f /etc/httpd/conf/httpd2.conf*' /etc/sysconfig/conf2
+>- ```cp /etc/sysconfig/httpd /etc/sysconfig/conf1```
+>- ```cp /etc/sysconfig/httpd /etc/sysconfig/conf2```
+>- ```sed -i 's*#OPTIONS=*OPTIONS=-f /etc/httpd/conf/httpd1.conf*' /etc/sysconfig/conf1```
+>- ```sed -i 's*#OPTIONS=*OPTIONS=-f /etc/httpd/conf/httpd2.conf*' /etc/sysconfig/conf2```
     
 ```
 [root@dz8 ~]# cp /etc/sysconfig/httpd /etc/sysconfig/conf1
@@ -309,15 +306,15 @@ OPTIONS=-f /etc/httpd/conf/httpd1.conf
 #
 LANG=C
 ```
-- Скопировать и изменить файлы настройки демона httpd
->- cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd1.conf
->- cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd2.conf
+- Скопировать и изменить файлы настройки демона httpd```
+>- ```cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd1.conf```
+>- ```cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd2.conf```
 >- используем разные порты
->- sed -i 's/Listen 80/Listen 8081/' /etc/httpd/conf/httpd1.conf
->- sed -i 's/Listen 80/Listen 8082/' /etc/httpd/conf/httpd2.conf
+>- ```sed -i 's/Listen 80/Listen 8081/' /etc/httpd/conf/httpd1.conf```
+>- ```sed -i 's/Listen 80/Listen 8082/' /etc/httpd/conf/httpd2.conf```
 >- и разные pid файлы
->- echo "PidFile /var/run/httpd/httpd1.pid" >> /etc/httpd/conf/httpd1.conf
->- echo "PidFile /var/run/httpd/httpd2.pid" >> /etc/httpd/conf/httpd2.conf
+>- ```echo "PidFile /var/run/httpd/httpd1.pid" >> /etc/httpd/conf/httpd1.conf```
+>- ```echo "PidFile /var/run/httpd/httpd2.pid" >> /etc/httpd/conf/httpd2.conf```
 ```
 [root@dz8 ~]# cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd1.conf
 [root@dz8 ~]# cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd2.conf
@@ -350,9 +347,9 @@ PidFile /var/run/httpd/httpd1.pid
 ```
    
 - Запустить два инстанса httpd
->- systemctl daemon-reload
->- systemctl enable --now httpd@conf1.service
->- systemctl enable --now httpd@conf2.service
+>- ```systemctl daemon-reload```
+>- ```systemctl enable --now httpd@conf1.service```
+>- ```systemctl enable --now httpd@conf2.service```
 
 ```
 [root@dz8 /]# systemctl enable --now httpd@conf1.service

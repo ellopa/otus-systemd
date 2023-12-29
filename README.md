@@ -312,10 +312,10 @@ LANG=C
 - Скопировать и изменить файлы настройки демона httpd
 >- cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd1.conf
 >- cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd2.conf
->- # используем разные порты
+>- используем разные порты
 >- sed -i 's/Listen 80/Listen 8081/' /etc/httpd/conf/httpd1.conf
 >- sed -i 's/Listen 80/Listen 8082/' /etc/httpd/conf/httpd2.conf
->- # и разные pid файлы
+>- и разные pid файлы
 >- echo "PidFile /var/run/httpd/httpd1.pid" >> /etc/httpd/conf/httpd1.conf
 >- echo "PidFile /var/run/httpd/httpd2.pid" >> /etc/httpd/conf/httpd2.conf
 ```
@@ -362,8 +362,8 @@ Created symlink from /etc/systemd/system/multi-user.target.wants/httpd@conf2.ser
 ```
  
 - Проверить статус сервисов
->- systemctl status httpd@conf1.service
->- systemctl status httpd@conf2.service
+>- ```systemctl status httpd@conf1.service```
+>- ```systemctl status httpd@conf2.service```
 ```
 [root@dz8SystemD /]# systemctl status httpd@conf1.service
 ● httpd@conf1.service - The Apache HTTP Server

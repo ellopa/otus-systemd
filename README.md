@@ -3,8 +3,8 @@
 ### 1.Написать сервис.
 
 >-```Условия:```
->-```- Раз в 30 секунд мониторить лог на предмет наличия ключевого слова.```
->-```- Файл и слово должны задаваться в /etc/sysconfig.```
+>-```Раз в 30 секунд мониторить лог на предмет наличия ключевого слова.```
+>-```Файл и слово должны задаваться в /etc/sysconfig.```
 
 - Создать файл с конфигурацией для сервиса в директории /etc/sysconfig - из неё сервис будет брать необходимые переменные /etc/sysconfig/watchlog
 ```bash
@@ -169,7 +169,7 @@ KillMode=process
 [Install]
 WantedBy=multi-user.target
 ```
->- ```Запустить сервис spawn-fcgi.service```
+- Запустить сервис spawn-fcgi.service
 
 ```
 [root@dz8 ~]# systemctl daemon-reload
@@ -408,7 +408,7 @@ Dec 29 11:10:35 dz8SystemD systemd[1]: Started The Apache HTTP Server.
 Hint: Some lines were ellipsized, use -l to show in full.
 ```
 
->- Проверить можно несколькими способами, например посмотреть какие порты слушаются
+- Проверить можно несколькими способами, например посмотреть какие порты слушаются
 
 ```bash
 [root@dz8 /]# ss -tnulp | grep httpd
